@@ -1,0 +1,74 @@
+cat > backend/prisma/schema.prisma << 'EOF'
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(USER)
+  clientId  String?
+  client    Client?  @relation(fields: [clientId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Client {
+  id        String   @id @default(uuid())
+  name      String
+  gstin     String   @unique
+  address   String?
+  phone     String?
+  email     String?
+  users     User[]
+  invoices  Invoice[]
+  expenses  Expense[]
+  createdAt DateTime @default(now())
+
+  @@map("clients")
+}
+
+model Invoice {
+  id             String   @id @default(uuid())
+  invoiceNumber  String   @unique
+  clientId       String
+  client         Client   @relation(fields: [clientId], references: [id])
+  customer       String
+  amount         Decimal
+  taxAmount      Decimal
+  status         String   @default("DRAFT")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("invoices")
+}
+
+model Expense {
+  id        String   @id @default(uuid())
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id])
+  category  String
+  amount    Decimal
+  date      DateTime
+  createdAt DateTime @default(now())
+
+  @@map("expenses")
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  ACCOUNTANT
+  VIEWER
+  USER
+}
+EOF
