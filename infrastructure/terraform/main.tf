@@ -122,7 +122,7 @@ resource "aws_security_group" "billing_app" {
 
 resource "aws_key_pair" "deployer" {
   key_name   = "billing-app-key"
-  public_key = file(/home/codespace/.ssh/billing-app-key.pub)
+  public_key = file("/home/codespace/.ssh/billing-app-key.pub")
 
   tags = {
     Name = "billing-deployer-key"
