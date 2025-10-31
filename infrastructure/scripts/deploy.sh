@@ -47,19 +47,19 @@ npm run build
 
 # Deploy backend
 echo "🚢 Deploying backend..."
-rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" \
+rsync -avz --delete -e "ssh -i ~/.ssh/billing-app-key -o StrictHostKeyChecking=no" \
   ../backend/dist/ \
   ubuntu@$EC2_HOST:/var/www/billing-app/backend/dist/
 
 # Deploy frontend
 echo "🎨 Deploying frontend..."
-rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" \
+rsync -avz --delete -e "ssh -i ~/.ssh/billing-app-key -o StrictHostKeyChecking=no" \
   ./build/ \
   ubuntu@$EC2_HOST:/var/www/billing-app/frontend/build/
 
 # Restart services
 echo "♻️  Restarting services..."
-ssh ubuntu@$EC2_HOST << 'DEPLOY_EOF'
+ssh -i ~/.ssh/billing-app-key -o StrictHostKeyChecking=no ubuntu@$EC2_HOST << 'DEPLOY_EOF'
   cd /var/www/billing-app/backend
   npm ci --production
   pm2 restart billing-backend
