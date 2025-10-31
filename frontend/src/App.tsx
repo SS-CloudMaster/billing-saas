@@ -1,4 +1,3 @@
-cat > frontend/src/App.tsx << 'EOF'
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
@@ -19,4 +18,3 @@ function App() {
 }
 
 export default App;
-EOF

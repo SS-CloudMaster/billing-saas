@@ -1,4 +1,3 @@
-cat > frontend/package.json << 'EOF'
 {
   "name": "billing-frontend",
   "version": "1.0.0",
@@ -33,4 +32,3 @@ cat > frontend/package.json << 'EOF'
     "@types/react-dom": "^18.2.15"
   }
 }
-EOF
