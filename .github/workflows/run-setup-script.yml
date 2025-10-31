@@ -1,0 +1,45 @@
+name: Run setup_project script
+
+on:
+  workflow_dispatch:      # manual trigger from Actions UI
+  # optional: run on push:
+  # push:
+  #   branches: [ main ]
+
+permissions:
+  contents: write         # required if workflow will commit & push changes
+
+jobs:
+  run-setup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true   # leave true to use GITHUB_TOKEN
+
+      - name: Make script executable
+        run: |
+          if [ -f "./setup_project.sh" ]; then
+            chmod +x ./setup_project.sh
+          else
+            echo "ERROR: setup_project.sh not found"; exit 1
+          fi
+
+      - name: Run setup script
+        run: ./setup_project.sh
+
+      - name: Show created files (summary)
+        run: ls -R || true
+
+      - name: Commit & push changes
+        env:
+          GIT_AUTHOR_NAME: "github-actions[bot]"
+          GIT_AUTHOR_EMAIL: "41898282+github-actions[bot]@users.noreply.github.com"
+        run: |
+          git config user.name "$GIT_AUTHOR_NAME"
+          git config user.email "$GIT_AUTHOR_EMAIL"
+          git add -A
+          git commit -m "chore: create project folder structure" || echo "No changes to commit"
+          git push
